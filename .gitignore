@@ -1,0 +1,32 @@
+# Addons directory (user development workspace)
+addons/
+
+# Visual Studio Code
+.vscode/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+
+# Development notes
+.todo.txt
+
+# Backup files
+*.backup

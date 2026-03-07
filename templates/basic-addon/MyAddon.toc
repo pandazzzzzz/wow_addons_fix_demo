@@ -1,0 +1,13 @@
+## Interface: 110007
+## Title: MyAddon
+## Title-zhCN: 我的插件
+## Notes: A sample WoW addon template
+## Notes-zhCN: 示例魔兽世界插件模板
+## Author: YourName
+## Version: 1.0.0
+## SavedVariables: MyAddonDB
+## OptionalDeps: Ace3, LibStub
+
+# Main files
+MyAddon.lua
+MyAddon.xml

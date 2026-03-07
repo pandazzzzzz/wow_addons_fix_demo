@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "mcp__fetch__fetch",
+      "WebFetch(domain:wowpedia.fandom.com)",
+      "WebFetch(domain:www.wowhead.com)",
+      "WebFetch(domain:wow.tools)",
+      "WebFetch(domain:worldofwarcraft.blizzard.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh api:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:warcraft.wiki.gg)",
+      "WebFetch(domain:wago.tools)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

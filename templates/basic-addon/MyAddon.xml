@@ -1,0 +1,63 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+
+    <!--
+    ============================================================================
+    MyAddonTemplate - 基础帧模板
+    ============================================================================
+    -->
+    <Frame name="MyAddonTemplate" virtual="true">
+        <Size x="200" y="100"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Bg">
+                    <Color r="0" g="0" b="0" a="0.5"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Title" inherits="GameFontNormal" text="MyAddon">
+                    <Anchors>
+                        <Anchor point="TOP" y="-10"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>self:OnLoad()</OnLoad>
+            <OnShow>self:OnShow()</OnShow>
+            <OnHide>self:OnHide()</OnHide>
+        </Scripts>
+    </Frame>
+
+    <!--
+    ============================================================================
+    MyAddonButtonTemplate - 按钮模板
+    ============================================================================
+    -->
+    <Button name="MyAddonButtonTemplate" virtual="true">
+        <Size x="100" y="25"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Bg">
+                    <Color r="0.2" g="0.2" b="0.2" a="0.8"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <NormalText inherits="GameFontNormal"/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square">
+            <Color r="1" g="1" b="1" a="0.3"/>
+        </HighlightTexture>
+        <Scripts>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(self.tooltipText or "Button", 1, 1, 1)
+                GameTooltip:Show()
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+
+</Ui>
