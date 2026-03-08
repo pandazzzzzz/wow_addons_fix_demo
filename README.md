@@ -94,4 +94,9 @@ World of Warcraft/_retail_/Interface/AddOns/
 
 ## 许可证
 
-此模板库仅供学习参考使用。
+本项目采用 [GNU General Public License v3.0](LICENSE) 协议开源。
+
+这意味着你可以自由使用、修改和分发本项目，但衍生作品必须：
+- 同样采用 GPL-3.0 协议
+- 保持开源
+- 包含原版权声明
