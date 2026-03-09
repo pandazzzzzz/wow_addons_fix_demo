@@ -1,98 +1,46 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 项目说明
 
-## Project Overview
+魔兽世界正式服（Retail）插件开发项目。
 
-魔兽世界插件开发项目，用于正式服（Retail）版本的插件开发与维护。
+## API文档来源
 
-## Development Commands
+### 官方资源
 
-- `/wqt debug` - Toggle debug mode (示例，具体命令因插件而异)
+- 游戏内置源码: `_retail_/Interface/FrameXML/`
+- Gethe/wow-ui-source: https://github.com/Gethe/wow-ui-source
+- wago.tools: https://wago.tools
 
-## 魔兽世界插件开发规范
+### 社区资源
 
-### TOC文件结构
+- Warcraft Wiki: https://warcraft.wiki.gg
+- CurseForge: https://www.curseforge.com/wow/addons
+
+## 开发规范
+
+### TOC版本号
 
 ```
-## Interface: 100207        # 正式服版本号
-## Title: Addon Name
-## Author: Author Name
-## Version: 1.0.0
-## SavedVariables: AddonDB
-## OptionalDeps: Ace3, LibStub
-
-File1.lua
-File2.xml
+## Interface: 120001  # Midnight (12.x)
 ```
 
-### 核心架构模式
+### 核心模式
 
-**帧池（Frame Pool）**
-```lua
--- 创建帧池优化内存复用
-local pool = CreateFramePool("BUTTON", parent, "Template", resetFunc)
-local frame = pool:Acquire()
-pool:Release(frame)
-```
-
-**Mixin模式**
-```lua
-MyFrameMixin = {}
-
-function MyFrameMixin:OnLoad()
-    -- 初始化逻辑
-end
-
-function MyFrameMixin:OnEvent(event, ...)
-    -- 事件处理
-end
-```
-
-**事件注册**
-```lua
--- 传统事件
-frame:RegisterEvent("EVENT_NAME")
-frame:SetScript("OnEvent", function(self, event, ...) end)
-
--- EventRegistry回调（推荐）
-EventRegistry:RegisterCallback("Event.Name", callback, owner)
-```
+**帧池** - 内存复用
+**Mixin** - 面向对象封装
+**EventRegistry** - 现代事件系统（优于传统frame:RegisterEvent）
 
 ### 常用API命名空间
 
-- `C_QuestLog` - 任务相关
-- `C_Map` - 地图相关
-- `C_Timer` - 定时器
-- `C_SuperTrack` - 超级追踪
-- `C_CVar` - CVar设置
+`C_QuestLog` `C_Map` `C_Timer` `C_SuperTrack` `C_CVar`
 
-### XML模板结构
+### 关键注意事项
 
-```xml
-<Frame name="MyTemplate" virtual="true">
-    <Scripts>
-        <OnLoad>self:OnLoad()</OnLoad>
-        <OnEvent>self:OnEvent(event, ...)</OnEvent>
-    </Scripts>
-</Frame>
-```
-
-### SavedVariables
-
-在TOC中声明的变量会持久化到 `WTF/Account/账号名/SavedVariables/插件名.lua`
-
-### 开发注意事项
-
-1. **战斗锁定** - 部分操作无法在战斗中进行
-2. **安全代码** - `secure`属性的限制
-3. **版本兼容** - 使用 `select(4, GetBuildInfo())` 检测版本
-4. **内存优化** - 避免在OnUpdate中创建表，使用帧池
-5. **事件节流** - 频繁触发的事件需要去重处理
+1. 战斗锁定 - 部分操作无法在战斗中进行
+2. 内存优化 - 避免在OnUpdate中创建表
+3. 版本检测 - `select(4, GetBuildInfo())`
 
 ### 第三方库
 
-- **LibStub** - 库管理
-- **AceAddon-3.0** - 插件框架
-- **AceDB-3.0** - 数据库管理
-- **CallbackHandler-1.0** - 回调系统
+LibStub, AceAddon-3.0, AceDB-3.0
