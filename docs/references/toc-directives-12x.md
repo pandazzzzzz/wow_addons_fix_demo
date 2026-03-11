@@ -25,6 +25,32 @@
 
 ## 12.x 新特性指令
 
+### 插件栏功能 (AddonCompartment) (11.0+)
+
+```toc
+## AddonCompartmentFunc: MyAddon_OnClick        # 点击按钮执行的函数
+## AddonCompartmentFuncOnEnter: MyAddon_OnEnter # 鼠标进入时执行
+## AddonCompartmentFuncOnLeave: MyAddon_OnLeave # 鼠标离开时执行
+```
+
+```lua
+-- 点击插件栏按钮时调用
+function MyAddon_OnClick(btn, buttonName, down)
+    print("Button clicked:", buttonName)
+    -- buttonName: "LeftButton", "RightButton" 等
+end
+
+function MyAddon_OnEnter(btn)
+    GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
+    GameTooltip:AddLine("My Addon")
+    GameTooltip:Show()
+end
+
+function MyAddon_OnLeave(btn)
+    GameTooltip:Hide()
+end
+```
+
 ### Category 与 Group
 
 ```toc
@@ -57,15 +83,32 @@
 限制只在特定客户端类型加载:
 
 ```toc
-## AllowLoadGameType: standard
+## AllowLoadGameType: mainline
 ```
 
 **可选值**:
-- `standard` - Retail (Mainline)
-- `classic` - Classic Era
-- `bcc` - Burning Crusade Classic
-- `wotlk` - Wrath of the Lich King Classic
+- `mainline` - Retail (Mainline)
+- `vanilla` - Classic Era
+- `tbc` - TBC Classic
+- `wrath` - Wrath Classic
 - `cata` - Cataclysm Classic
+- `mists` - Mists of Pandaria Classic (11.1.0+)
+- `plunderstorm` - Plunderstorm
+
+#### 文件级条件加载 (11.1.5+)
+
+可在文件行后添加条件实现文件级别的条件加载:
+
+```toc
+# 只在 Retail 加载
+MainlineCode.lua [AllowLoadGameType mainline]
+
+# 只在 Classic 系列加载
+ClassicCode.lua [AllowLoadGameType vanilla, tbc, wrath, cata]
+
+# 根据语言加载
+Localization\[TextLocale].lua
+```
 
 #### AllowLoadTextLocale
 
@@ -86,13 +129,21 @@
 - `ptBR` - 葡萄牙语(巴西)
 - `ruRU` - 俄语
 
-### 表访问权限
+### 表访问权限 (11.1.7+)
 
 ```toc
 ## AllowAddOnTableAccess: 1
 ```
 
-允许插件访问 `_.addonTable`（用于共享库）。
+允许通过 `C_AddOns.GetLocalAddOnTable("MyAddon")` 获取插件的共享表，用于模块间数据共享。
+
+### 存档变量优先加载 (11.1.5+)
+
+```toc
+## LoadSavedVariablesFirst: 1
+```
+
+在执行任何 Lua 文件前先加载 SavedVariables，适用于需要在初始化时立即访问配置的插件。
 
 ## TOC 变量展开
 

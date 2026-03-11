@@ -92,7 +92,42 @@ end
 
 12.x 推荐使用现代事件系统 `EventRegistry`，提供更清晰的 API 和更好的性能。
 
-### 注册回调
+### RegisterFrameEventAndCallback
+
+无需创建帧即可监听游戏事件：
+
+```lua
+-- 注册游戏事件回调（无需创建帧）
+-- 参数: event, callback, owner, ... (额外参数)
+local token = EventRegistry:RegisterFrameEventAndCallback(
+    "PLAYER_ENTERING_WORLD",
+    function(ownerID, isLogin, isReload)
+        print("玩家进入世界", isLogin, isReload)
+    end,
+    nil,  -- owner（可选）
+    "extra", "args"  -- 额外参数会传递给回调
+)
+
+-- 注销回调
+EventRegistry:UnregisterCallback("PLAYER_ENTERING_WORLD", nil)
+
+-- 批量注册多个事件
+EventRegistry:RegisterFrameEventAndCallback("PLAYER_REGEN_DISABLED", function()
+    print("进入战斗")
+end)
+
+EventRegistry:RegisterFrameEventAndCallback("PLAYER_REGEN_ENABLED", function()
+    print("离开战斗")
+end)
+```
+
+**与传统 frame:RegisterEvent 的区别**:
+| 方式 | 优点 | 缺点 |
+|------|------|------|
+| `frame:RegisterEvent` | 兼容性好，支持 `UnregisterAllEvents` | 需要创建帧 |
+| `RegisterFrameEventAndCallback` | 无需创建帧，代码更简洁 | 11.0+ 才支持 |
+
+### 注册自定义回调
 
 ```lua
 -- 注册回调
@@ -279,9 +314,10 @@ end
 | `frame:RegisterEvent(event)` | 注册事件监听 |
 | `frame:UnregisterEvent(event)` | 取消事件监听 |
 | `frame:RegisterAllEvents()` | 注册所有事件 |
-| `EventRegistry:RegisterCallback(event, callback, owner)` | 注册回调 |
+| `EventRegistry:RegisterCallback(event, callback, owner)` | 注册自定义事件回调 |
 | `EventRegistry:UnregisterCallback(event, owner)` | 取消回调 |
-| `EventRegistry:TriggerEvent(event, ...)` | 触发事件 |
+| `EventRegistry:TriggerEvent(event, ...)` | 触发自定义事件 |
+| `EventRegistry:RegisterFrameEventAndCallback(event, callback, owner, ...)` | 注册游戏事件回调 (11.0+) |
 
 ## 相关链接
 

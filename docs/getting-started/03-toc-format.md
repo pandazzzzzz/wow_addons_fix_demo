@@ -69,11 +69,11 @@ Modules\*.lua
 ```
 
 **常用版本号**:
-| 版本 | 版本号 |
+| 版本 | 版本号范围 |
 |------|--------|
-| Midnight (12.x) | 120001 |
-| The War Within (11.x) | 110107 |
-| Dragonflight (10.x) | 100207 |
+| Midnight (12.x) | 120001+ |
+| The War Within (11.x) | 110000 - 110xxx |
+| Dragonflight (10.x) | 100000 - 100xxx |
 
 ### Title（必需）
 
@@ -143,15 +143,12 @@ Modules\*.lua
 限制只在特定客户端类型加载：
 
 ```toc
-## AllowLoadGameType: standard
+## AllowLoadGameType: mainline
 ```
 
-**可选值**:
-- `standard` - Retail (Mainline)
-- `classic` - Classic Era
-- `bcc` - TBC Classic
-- `wotlk` - Wrath Classic
-- `cata` - Cataclysm Classic
+**可选值**: `mainline`, `vanilla`, `tbc`, `wrath`, `cata`, `mists`, `plunderstorm`
+
+> 完整指令参考见 [TOC 指令完整列表](../references/toc-directives-12x.md)
 
 ### AllowLoadTextLocale
 
