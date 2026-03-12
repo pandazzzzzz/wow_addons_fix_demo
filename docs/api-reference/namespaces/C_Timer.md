@@ -7,6 +7,8 @@
 
 C_Timer 提供定时执行代码的功能，是传统 `OnUpdate` 脚本的现代替代方案。
 
+> **注意**: `C_Timer.After` 是原生 API，但 `NewTimer` 和 `NewTicker` 是 FrameXML 定义的辅助函数（位于 `FrameXML/Timer.lua`），非原生 C API。
+
 ## 基本用法
 
 ### After - 延迟执行

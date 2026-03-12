@@ -97,11 +97,13 @@ local hasWaypoint = C_Map.HasUserWaypoint()
 ### 地图探索
 
 ```lua
--- 检查地图是否探索完成
-local explored = C_MapExplorationInfo.GetExploredMapTextureInfo(mapID)
+-- 获取地图探索纹理信息
+local textureInfo = C_MapExplorationInfo.GetExploredMapTextureInfo(mapID)
+-- 返回表，包含已探索区域的纹理信息
 
--- 获取探索状态
-local isExplored = C_Map.IsCityMap(mapID)
+-- 检查地图是否为城市（通过 flags 判断）
+local mapInfo = C_Map.GetMapInfo(mapID)
+local isCity = mapInfo and bit.band(mapInfo.flags, Enum.UIMapFlag.City) ~= 0
 ```
 
 ## 示例用法
@@ -116,12 +118,17 @@ local function GetPlayerLocationInfo()
     local mapInfo = C_Map.GetMapInfo(mapID)
     local position = C_Map.GetPlayerMapPosition(mapID, "player")
 
+    local x, y
+    if position then
+        x, y = position:GetXY()
+    end
+
     return {
         mapID = mapID,
         mapName = mapInfo and mapInfo.name,
         mapType = mapInfo and mapInfo.mapType,
-        x = position and position.x,
-        y = position and position.y,
+        x = x,
+        y = y,
     }
 end
 ```
@@ -165,12 +172,12 @@ local function SetWaypointToQuest(questID)
     local mapID = C_QuestLog.GetNextWaypointMapID(questID)
     if not mapID then return false end
 
-    local x, y = C_QuestLog.GetNextWaypoint(questID)
-    if not x or not y then return false end
+    -- 获取下一个导路点文本（注意：这是导航文本而非坐标）
+    local waypointText = C_QuestLog.GetNextWaypointText(questID)
 
-    -- 创建导路点
-    local waypoint = UiMapPoint.CreateFromCoordinates(mapID, x, y)
-    C_Map.SetUserWaypoint(waypoint)
+    -- 如果需要坐标，应使用 SuperTrack 或其他方式
+    -- 创建导路点需要通过 C_SuperTrack 设置追踪
+    C_SuperTrack.SetSuperTrackedQuestID(questID)
 
     return true
 end

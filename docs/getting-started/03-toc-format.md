@@ -231,11 +231,11 @@ Loca\[TextLocale].lua
 ### 根据客户端类型
 
 ```toc
-## AllowLoadGameType: standard
+## AllowLoadGameType: mainline
 Core\Retail.lua
 
-## AllowLoadGameType: classic
-Core\Classic.lua
+## AllowLoadGameType: vanilla
+Core\ClassicEra.lua
 ```
 
 ## 文件加载

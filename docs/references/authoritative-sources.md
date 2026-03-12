@@ -90,12 +90,12 @@ World of Warcraft/_retail_/Interface/FrameXML/
 
 ### Interface 版本号
 
-| 版本 | 版本号 |
+| 版本 | 版本号范围 |
 |------|--------|
-| Midnight (12.x) | 120001 |
-| The War Within (11.x) | 110107 |
-| Dragonflight (10.x) | 100207 |
-| Shadowlands (9.x) | 90207 |
+| Midnight (12.x) | 120001+ |
+| The War Within (11.x) | 110000 - 110xxx |
+| Dragonflight (10.x) | 100000 - 100xxx |
+| Shadowlands (9.x) | 90000 - 90xxx |
 
 ### 版本检测
 
