@@ -33,7 +33,8 @@
 
 ### 常用API命名空间
 
-`C_QuestLog` `C_Map` `C_Timer` `C_SuperTrack` `C_CVar`
+**核心**: `C_QuestLog` `C_Map` `C_Timer` `C_SuperTrack` `C_CVar`
+**Midnight新增**: `C_Housing` `C_DamageMeter` `C_EncounterTimeline`
 
 ### 关键注意事项
 
@@ -44,3 +45,11 @@
 ### 第三方库
 
 LibStub, AceAddon-3.0, AceDB-3.0
+
+### API变更 (Midnight 12.x)
+
+- `BNSetAFK`/`BNSetDND` → `C_BattleNet.SetAFK`/`SetDND`
+- `GetCurrentGraphicsSetting`/`SetCurrentGraphicsSetting` 已移除
+- 新增 `GetNumTotemSlots()`
+
+参考来源: https://warcraft.wiki.gg/wiki/Patch_12.0.1/API_changes
