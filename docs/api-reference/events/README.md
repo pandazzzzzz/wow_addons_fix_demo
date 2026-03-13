@@ -319,6 +319,23 @@ end
 | `EventRegistry:TriggerEvent(event, ...)` | 触发自定义事件 |
 | `EventRegistry:RegisterFrameEventAndCallback(event, callback, owner, ...)` | 注册游戏事件回调 (11.0+) |
 
+## 12.0.1 新增事件
+
+| 事件 | 说明 |
+|------|------|
+| `ENCOUNTER_TIMELINE_VIEW_ACTIVATED` | 时间轴视图激活 |
+| `ENCOUNTER_TIMELINE_VIEW_DEACTIVATED` | 时间轴视图关闭 |
+| `PHOTO_SHARING_AUTHORIZATION_NEEDED` | 需要照片分享授权 |
+| `PHOTO_SHARING_AUTHORIZATION_UPDATED` | 授权状态更新 |
+| `PHOTO_SHARING_PHOTO_UPLOAD_STATUS` | 照片上传状态 |
+| `PHOTO_SHARING_SCREENSHOT_READY` | 截图准备就绪 |
+| `BULK_REFUND_RESULT_RECEIVED` | 批量退款结果 |
+| `PLAYER_MAX_LEVEL_UPDATE` | 玩家最高等级更新 |
+
+### 已移除事件
+
+- `CHAT_MSG_ENCOUNTER_EVENT` - 已在12.0.1中移除
+
 ## 相关链接
 
 - [Warcraft Wiki - Events](https://warcraft.wiki.gg/wiki/Events)

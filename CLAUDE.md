@@ -48,8 +48,34 @@ LibStub, AceAddon-3.0, AceDB-3.0
 
 ### API变更 (Midnight 12.x)
 
-- `BNSetAFK`/`BNSetDND` → `C_BattleNet.SetAFK`/`SetDND`
-- `GetCurrentGraphicsSetting`/`SetCurrentGraphicsSetting` 已移除
-- 新增 `GetNumTotemSlots()`
+参考: [Patch 12.0.1/API changes](https://warcraft.wiki.gg/wiki/Patch_12.0.1/API_changes)
 
-参考来源: https://warcraft.wiki.gg/wiki/Patch_12.0.1/API_changes
+#### 已移除的API
+- `BNSetAFK`/`BNSetDND` → 使用 `C_BattleNet.SetAFK`/`SetDND`
+- `GetCurrentGraphicsSetting`/`SetCurrentGraphicsSetting` 已移除
+- `C_NamePlate.GetTargetClampingInsets`/`SetTargetClampingInsets` 已移除
+
+#### 新增API命名空间
+- `C_DamageMeter` - 伤害统计 ([文档](docs/api-reference/namespaces/C_DamageMeter.md))
+- `C_EncounterTimeline` - 遭遇战时间轴 ([文档](docs/api-reference/namespaces/C_EncounterTimeline.md))
+- `C_EncounterEvents` - 遭遇战事件 ([文档](docs/api-reference/namespaces/C_EncounterEvents.md))
+- `C_EncounterWarnings` - 遭遇战警告
+- `C_HousingPhotoSharing` - 房屋照片分享 ([文档](docs/api-reference/namespaces/C_HousingPhotoSharing.md))
+- `C_CombatAudioAlert` - 战斗音频警报
+
+#### 新增全局函数
+- `GetNumTotemSlots()` - 获取图腾槽位数量
+- `dumpobject(obj)` - 调试对象转储
+
+#### 参数变更
+- `C_DamageMeter.GetCombatSessionSourceFromID` - `sourceGUID` 变为可选，新增 `sourceCreatureID`
+- `C_StringUtil.StripHyperlinks` - 新增 `maintainTextures` 参数
+- `UnitCastingInfo` - 新增返回值 `delayTimeMs`
+
+#### 新增事件
+- `ENCOUNTER_TIMELINE_VIEW_ACTIVATED`/`DEACTIVATED`
+- `PHOTO_SHARING_AUTHORIZATION_NEEDED`/`UPDATED`/`PHOTO_UPLOAD_STATUS`/`SCREENSHOT_READY`
+- `PLAYER_MAX_LEVEL_UPDATE`
+
+#### 已移除事件
+- `CHAT_MSG_ENCOUNTER_EVENT`

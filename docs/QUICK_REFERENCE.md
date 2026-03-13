@@ -1,258 +1,264 @@
-# 魔兽世界插件开发快速参考
+# WoW插件开发速查表
 
-## 常用命令
+> 魔兽世界正式服 (Retail 12.x) 插件开发速查表
+> Interface: 120001 (Midnight)
 
-### 游戏内调试
+## 目录
+
+- [版本检测](#版本检测)
+- [TOC格式](#toc格式)
+- [常见API](#常见api)
+- [事件系统](#事件系统)
+- [战斗锁定](#战斗锁定)
+- [常用库](#常用库)
+
+## 版本检测
+
 ```lua
-/reload                    -- 重载UI
-/dump var                  -- 打印变量
-/fstack                    -- 显示帧层级
-/console scriptErrors 1    -- 启用错误显示
+-- 获取客户端版本信息
+local version, build, date, tocversion = GetBuildInfo()
+-- tocversion >= 120001 表示 Midnight (12.x)
+
+-- 检查是否为正式服
+local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+
+-- 12.0.1 移除的API (注意避免使用)
+-- BNSetAFK/BNSetDND → 使用 C_BattleNet.SetAFK/SetDND
+-- GetCurrentGraphicsSetting/SetCurrentGraphicsSetting (已移除)
 ```
 
-### API 快速查询
-```lua
-/dump GetBuildInfo()                 -- 版本信息
-/dump C_AddOns.GetAddOnInfo("name")  -- 插件信息
-/dump UnitName("player")             -- 玩家名称
-/dump UnitClass("player")            -- 玩家职业
-/dump GetTime()                      -- 游戏时间
+## TOC格式
+
 ```
-
----
-
-## TOC 头部模板
-
-```toc
 ## Interface: 120001
-## Title: Addon Name
-## Title-zhCN: 中文名
-## Notes: Description
-## Notes-zhCN: 描述
+## Title: MyAddon
+## Notes: 我的插件描述
 ## Author: YourName
 ## Version: 1.0.0
-## SavedVariables: AddonDB
-## OptionalDeps: Ace3
+## SavedVariables: MyAddonDB
+## Dependencies: Blizzard_ObjectiveTracker
+
+main.lua
 ```
 
----
+## 常见API
 
-## 核心事件
-
-| 事件 | 说明 |
-|------|------|
-| `ADDON_LOADED` | 插件加载完成 |
-| `PLAYER_LOGIN` | 玩家登录 |
-| `PLAYER_ENTERING_WORLD` | 进入世界 |
-| `QUEST_LOG_UPDATE` | 任务更新 |
-| `BAG_UPDATE` | 背包更新 |
-| `UNIT_HEALTH` | 血量变化 |
-| `UNIT_AURA` | BUFF/DEBUFF变化 |
-| `CHAT_MSG_*` | 聊天消息 |
-
----
-
-## 常用 API
-
-### 角色信息
+### 基础函数
 ```lua
-UnitName("player")           -- 名字
-UnitClass("player")          -- 职业
-UnitRace("player")           -- 种族
-UnitLevel("player")          -- 等级
-UnitHealth("player")         -- 当前血量
-UnitHealthMax("player")      -- 最大血量
-UnitPower("player")          -- 当前能量
-UnitExists("target")         -- 目标是否存在
-```
+-- 打印
+print("Hello WoW")
 
-### 任务相关
-```lua
-C_QuestLog.GetNumQuestLogEntries()      -- 任务数量
-C_QuestLog.GetTitleForQuestID(id)       -- 任务标题
-C_QuestLog.IsComplete(id)               -- 是否完成
-C_QuestLog.GetQuestObjectives(id)       -- 目标列表
-C_SuperTrack.SetSuperTrackedQuestID(id) -- 设置追踪
-```
-
-### 地图相关
-```lua
-C_Map.GetBestMapForUnit("player")       -- 当前地图ID
-C_Map.GetMapInfo(mapID)                 -- 地图信息
-GetPlayerMapPosition("player")          -- 玩家坐标
-```
-
-### 背包相关
-```lua
-GetContainerNumSlots(bagID)             -- 背包槽数量
-GetContainerItemLink(bagID, slot)       -- 物品链接
-GetItemCount(itemID)                    -- 物品数量
-C_Container.GetContainerItemInfo()      -- 物品信息
-```
-
----
-
-## 帧创建
-
-```lua
--- 基础帧
+-- 创建帧
 local frame = CreateFrame("Frame", "MyFrame", UIParent)
 frame:SetSize(200, 100)
 frame:SetPoint("CENTER")
-frame:Show()
 
--- 带背景
-frame.bg = frame:CreateTexture(nil, "BACKGROUND")
-frame.bg:SetAllPoints()
-frame.bg:SetColorTexture(0, 0, 0, 0.5)
-
--- 文字
-frame.text = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-frame.text:SetPoint("CENTER")
-frame.text:SetText("Hello World")
+-- 创建按钮
+local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+button:SetSize(100, 30)
+button:SetPoint("CENTER")
+button:SetText("Click")
 ```
 
----
-
-## 事件注册
-
+### 12.0 新增API
 ```lua
--- 传统方式
+-- 获取图腾槽位数量
+local numSlots = GetNumTotemSlots()
+
+-- 调试对象转储
+dumpobject(obj)
+
+-- 获取战斗统计会话时长
+local seconds = C_DamageMeter.GetSessionDurationSeconds()
+
+-- 遭遇战时间轴
+-- C_EncounterTimeline - 遭遇战时间轴系统
+```
+
+### C_QuestLog 任务日志
+```lua
+local numQuests = C_QuestLog.GetNumQuestLogEntries()
+local questInfo = C_QuestLog.GetInfo(questLogIndex)
+C_QuestLog.IsOnQuest(questID)
+C_QuestLog.IsComplete(questID)
+```
+
+### C_Map 地图
+```lua
+local mapID = C_Map.GetBestMapForUnit("player")
+local mapInfo = C_Map.GetMapInfo(mapID)
+local position = C_Map.GetPlayerMapPosition(mapID, "player")
+```
+
+### C_Timer 定时器
+```lua
+-- 单次延迟执行
+C_Timer.After(3, function()
+    print("3秒后执行")
+end)
+
+-- 循环定时器
+local ticker = C_Timer.NewTicker(1, function()
+    print("每秒执行")
+end, 5) -- 执行5次
+
+-- 停止循环定时器
+ticker:Cancel()
+```
+
+### 单位信息
+```lua
+local name = UnitName("player")
+local health = UnitHealth("player")
+local maxHealth = UnitHealthMax("player")
+local level = UnitLevel("player")
+local class = UnitClass("player")
+local isDead = UnitIsDead("player")
+```
+
+### 战斗相关
+```lua
+-- 检查是否在战斗中
+local inCombat = InCombatLockdown()
+
+-- 施法信息 (12.0新增返回值 delayTimeMs)
+local name, text, texture, startTime, endTime, isTradeSkill, 
+      castID, notInterruptible, spellId, isChargeValue, delayTimeMs = UnitCastingInfo("player")
+```
+
+## 事件系统
+
+### 传统方式
+```lua
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_LOGIN" then
-        print("Logged in!")
+    if event == "PLAYER_ENTERING_WORLD" then
+        local isLogin, isReload = ...
+        print("Entering world")
     end
 end)
-
--- EventRegistry（现代方式）
-EventRegistry:RegisterCallback("Event.Name", callback, owner)
 ```
 
----
-
-## 数据持久化
-
+### EventRegistry (12.x 推荐)
 ```lua
--- TOC声明: ## SavedVariables: MyDB
-
--- 使用
-if not MyDB then MyDB = {} end
-MyDB.setting = "value"
-
--- AceDB方式
-self.db = LibStub("AceDB-3.0"):New("MyDB", defaults, true)
-self.db.profile.setting = "value"
-```
-
----
-
-## 帧池模式
-
-```lua
--- 创建池
-local pool = CreateFramePool("BUTTON", parent, "Template", resetFunc)
-
--- 获取
-local frame = pool:Acquire()
-frame:SetPoint("CENTER")
-frame:Show()
-
--- 释放
-pool:Release(frame)
-```
-
----
-
-## Mixin 模式
-
-```lua
--- 定义 Mixin
-MyFrameMixin = {}
-
-function MyFrameMixin:OnLoad()
-    self:RegisterEvent("SOME_EVENT")
-end
-
-function MyFrameMixin:OnEvent(event, ...)
-    -- 处理事件
-end
-
--- 在XML中使用
--- <Frame name="MyFrame" inherits="MyFrameTemplate" parentArray="Frames">
---     <Scripts>
---         <OnLoad>self:OnLoad()</OnLoad>
---         <OnEvent>self:OnEvent(event, ...)</OnEvent>
---     </Scripts>
--- </Frame>
-```
-
----
-
-## 性能优化
-
-1. **缓存全局变量**
-   ```lua
-   local _G = _G
-   local pairs = pairs
-   ```
-
-2. **避免OnUpdate创建表**
-   ```lua
-   -- 错误
-   frame:SetScript("OnUpdate", function()
-       local t = {}  -- 每帧创建表！
-   end)
-
-   -- 正确
-   local t = {}
-   frame:SetScript("OnUpdate", function()
-       wipe(t)  -- 复用表
-   end)
-   ```
-
-3. **事件去重**
-   ```lua
-   local nextUpdate = 0
-   frame:SetScript("OnUpdate", function(self, elapsed)
-       nextUpdate = nextUpdate - elapsed
-       if nextUpdate > 0 then return end
-       nextUpdate = 0.1  -- 每0.1秒更新一次
-       -- 处理逻辑
-   end)
-   ```
-
----
-
-## 错误处理
-
-```lua
--- 安全调用
-local success, err = pcall(function()
-    -- 可能出错的代码
+-- 无需创建帧
+EventRegistry:RegisterFrameEventAndCallback("PLAYER_ENTERING_WORLD", function()
+    print("玩家进入世界")
 end)
 
-if not success then
-    print("Error:", err)
-end
+-- 带owner的注册
+EventRegistry:RegisterFrameEventAndCallback(
+    "PLAYER_REGEN_DISABLED",
+    function(ownerID)
+        print("进入战斗")
+    end,
+    "MyAddon"
+)
 
--- 战斗检查
-if InCombatLockdown() then return end
+-- 注销
+EventRegistry:UnregisterCallback("PLAYER_ENTERING_WORLD", "MyAddon")
 ```
 
----
+### 常用事件
+| 事件 | 说明 |
+|------|------|
+| `PLAYER_ENTERING_WORLD` | 玩家进入世界 |
+| `PLAYER_REGEN_DISABLED` | 进入战斗 |
+| `PLAYER_REGEN_ENABLED` | 离开战斗 |
+| `QUEST_LOG_UPDATE` | 任务日志更新 |
+| `BAG_UPDATE` | 背包更新 |
+| `UNIT_AURA` | 单位光环变化 |
 
-## 版本兼容
+### 12.0.1 新增事件
+| 事件 | 说明 |
+|------|------|
+| `ENCOUNTER_TIMELINE_VIEW_ACTIVATED` | 时间轴视图激活 |
+| `ENCOUNTER_TIMELINE_VIEW_DEACTIVATED` | 时间轴视图关闭 |
+| `PLAYER_MAX_LEVEL_UPDATE` | 玩家最高等级更新 |
+
+## 战斗锁定
 
 ```lua
-local interfaceVersion = select(4, GetBuildInfo())
+-- 战斗中不能执行的操作
+-- 1. 创建/显示/隐藏安全按钮
+-- 2. 修改按钮属性
+-- 3. 某些API调用
 
-if interfaceVersion >= 120000 then
-    -- Midnight (12.x) API
-elseif interfaceVersion >= 110000 then
-    -- The War Within (11.x) API
-else
-    -- Dragonflight (10.x) API
+-- 处理战斗状态
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+frame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_DISABLED" then
+        -- 进入战斗
+    else
+        -- 离开战斗，执行待处理操作
+    end
+end)
+```
+
+## 常用库
+
+### LibStub
+```lua
+local LibStub = LibStub
+local myLib = LibStub("MyLib-1.0")
+```
+
+### AceAddon-3.0
+```lua
+local MyAddon = LibStub("AceAddon-3.0"):NewAddon("MyAddon", "AceEvent-3.0")
+
+function MyAddon:OnEnable()
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+function MyAddon:PLAYER_ENTERING_WORLD(event, isLogin, isReload)
+    -- 处理事件
 end
 ```
+
+### AceDB-3.0
+```lua
+local defaults = {
+    profile = {
+        enabled = true,
+        scale = 1.0,
+    }
+}
+
+MyAddon.db = LibStub("AceDB-3.0"):New("MyAddonDB", defaults, true)
+```
+
+## API变更 (12.0.1)
+
+### 已弃用/移除的API
+```lua
+-- 以下API已移除，需要替换:
+-- BNSetAFK → C_BattleNet.SetAFK
+-- BNSetDND → C_BattleNet.SetDND
+-- GetCurrentGraphicsSetting (已移除)
+-- SetCurrentGraphicsSetting (已移除)
+-- C_NamePlate.GetTargetClampingInsets (已移除)
+-- C_NamePlate.SetTargetClampingInsets (已移除)
+```
+
+### 参数变更
+```lua
+-- C_DamageMeter.GetCombatSessionSourceFromID
+-- sourceGUID 参数现在为可选
+-- 新增 sourceCreatureID 参数
+
+-- C_StringUtil.StripHyperlinks
+-- 新增 maintainTextures 参数 (arg 6)
+
+-- C_CombatAudioAlert.SpeakText
+-- 新增 category 参数 (arg 2)
+```
+
+## 参考链接
+
+- [Warcraft Wiki](https://warcraft.wiki.gg)
+- [wago.tools](https://wago.tools)
+- [Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source)

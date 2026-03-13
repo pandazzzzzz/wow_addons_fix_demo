@@ -442,3 +442,79 @@ MyFrameMixin = {}
 5. **发布维护** → CurseForge/Wago + 版本更新
 
 关键在于熟悉事件驱动模型、掌握常用API、遵循性能优化最佳实践。
+
+---
+
+## 附录：12.0.1 API 变更
+
+### 已移除的API
+以下API在12.0.1中已被移除，需要替换为新的替代方案：
+
+| 旧API | 替代方案 |
+|-------|----------|
+| `BNSetAFK` | `C_BattleNet.SetAFK` |
+| `BNSetDND` | `C_BattleNet.SetDND` |
+| `GetCurrentGraphicsSetting` | 已移除 |
+| `SetCurrentGraphicsSetting` | 已移除 |
+| `C_NamePlate.GetTargetClampingInsets` | 已移除 |
+| `C_NamePlate.SetTargetClampingInsets` | 已移除 |
+
+### 新增的API命名空间
+12.0.1引入了以下新的API命名空间：
+
+- `C_EncounterEvents` - 遭遇战事件系统
+- `C_EncounterTimeline` - 遭遇战时间轴系统
+- `C_EncounterWarnings` - 遭遇战警告系统
+- `C_HousingPhotoSharing` - 房屋照片分享系统
+- `C_CombatAudioAlert` - 战斗音频警报系统
+
+### 新增的全局函数
+
+```lua
+-- 获取图腾槽位数量
+local numSlots = GetNumTotemSlots()
+
+-- 调试对象转储
+dumpobject(obj)
+```
+
+### 参数变更
+
+#### C_DamageMeter.GetCombatSessionSourceFromID
+- `sourceGUID` 参数现在为可选
+- 新增 `sourceCreatureID` 参数
+
+```lua
+-- 12.0.1之前
+C_DamageMeter.GetCombatSessionSourceFromID(combatSessionID, sourceType, sourceGUID)
+
+-- 12.0.1之后
+C_DamageMeter.GetCombatSessionSourceFromID(combatSessionID, sourceType, sourceGUID, sourceCreatureID)
+```
+
+#### C_StringUtil.StripHyperlinks
+- 新增 `maintainTextures` 参数 (第6个参数)
+
+#### C_CombatAudioAlert.SpeakText
+- 新增 `category` 参数 (第2个参数)
+
+#### UnitCastingInfo
+- 新增返回值 `delayTimeMs` (第11个返回值)
+
+### 新增事件
+
+| 事件 | 说明 |
+|------|------|
+| `ENCOUNTER_TIMELINE_VIEW_ACTIVATED` | 时间轴视图激活 |
+| `ENCOUNTER_TIMELINE_VIEW_DEACTIVATED` | 时间轴视图关闭 |
+| `PHOTO_SHARING_AUTHORIZATION_NEEDED` | 需要照片分享授权 |
+| `PHOTO_SHARING_AUTHORIZATION_UPDATED` | 授权状态更新 |
+| `PHOTO_SHARING_PHOTO_UPLOAD_STATUS` | 照片上传状态 |
+| `PHOTO_SHARING_SCREENSHOT_READY` | 截图准备就绪 |
+| `BULK_REFUND_RESULT_RECEIVED` | 批量退款结果 |
+| `PLAYER_MAX_LEVEL_UPDATE` | 玩家最高等级更新 |
+
+### 已移除事件
+- `CHAT_MSG_ENCOUNTER_EVENT` - 已在12.0.1中移除
+
+参考来源: [Warcraft Wiki - Patch 12.0.1/API changes](https://warcraft.wiki.gg/wiki/Patch_12.0.1/API_changes)
